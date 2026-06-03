@@ -1,0 +1,6 @@
+{
+  "name": "Forte Treining",
+  "description": "Super App de academia completo com perfil dinâmico de alunos, motor de treinos inteligente e painel administrativo com bloqueio financeiro integrado.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
