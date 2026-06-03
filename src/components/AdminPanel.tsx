@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { StudentProfile, Exercise, PaymentStatus } from '../types';
-import { Users, AlertTriangle, ShieldCheck, Check, Search, TrendingUp, Plus, Dumbbell, UserCheck, RotateCcw } from 'lucide-react';
+import { Users, AlertTriangle, ShieldCheck, Check, Search, TrendingUp, Plus, Dumbbell, UserCheck, RotateCcw, Trash2 } from 'lucide-react';
 
 interface AdminPanelProps {
   students: StudentProfile[];
@@ -15,8 +15,9 @@ interface AdminPanelProps {
   onSelectStudentId: (id: string) => void;
   onResetSimulator: () => void;
   onUpdateStudentStatus: (id: string, newStatus: PaymentStatus) => void;
-  onAddStudent: (name: string, email: string, status: PaymentStatus) => void;
+  onAddStudent: (name: string, email: string, status: PaymentStatus, registrationDate?: string) => void;
   onAddExercise: (name: string, muscleGroup: string, instructions: string) => void;
+  onDeleteStudent: (id: string) => void;
 }
 
 export default function AdminPanel({
@@ -28,13 +29,15 @@ export default function AdminPanel({
   onResetSimulator,
   onUpdateStudentStatus,
   onAddStudent,
-  onAddExercise
+  onAddExercise,
+  onDeleteStudent
 }: AdminPanelProps) {
   // Student state form
   const [studentName, setStudentName] = useState('');
   const [studentEmail, setStudentEmail] = useState('');
   const [studentStatus, setStudentStatus] = useState<PaymentStatus>('Pago');
   const [studentSearch, setStudentSearch] = useState('');
+  const [studentRegistrationDate, setStudentRegistrationDate] = useState(() => new Date().toISOString().split('T')[0]);
 
   // Exercise state form
   const [exName, setExName] = useState('');
@@ -54,9 +57,10 @@ export default function AdminPanel({
   const handleCreateStudent = (e: React.FormEvent) => {
     e.preventDefault();
     if (!studentName || !studentEmail) return;
-    onAddStudent(studentName, studentEmail, studentStatus);
+    onAddStudent(studentName, studentEmail, studentStatus, studentRegistrationDate);
     setStudentName('');
     setStudentEmail('');
+    setStudentRegistrationDate(new Date().toISOString().split('T')[0]);
     setShowAddStudent(false);
   };
 
@@ -268,8 +272,8 @@ export default function AdminPanel({
                       {stud.contact && (
                         <span className="text-[10px] text-[#D4FF00] font-mono block">📞 {stud.contact}</span>
                       )}
-                      <span className="text-[9px] text-neutral-500 block font-mono">
-                        Registro: {stud.registrationDate || '2026-06-03'}
+                      <span className="text-[10px] text-[#D4FF00] font-black block font-mono">
+                        📅 Adesão: {stud.registrationDate || '2026-06-03'}
                       </span>
                     </div>
 
@@ -298,7 +302,7 @@ export default function AdminPanel({
                       )}
                     </div>
 
-                    {/* Financial Status tag with selectors */}
+                    {/* Financial Status tag with selectors and deletion button */}
                     <div className="w-1/3 flex items-center gap-2 justify-end">
                       <select
                         id={`select-status-${stud.id}`}
@@ -316,6 +320,15 @@ export default function AdminPanel({
                         <option value="Pendente" className="bg-neutral-900 text-yellow-500">Pendente</option>
                         <option value="Inadimplente" className="bg-neutral-900 text-red-500">Inadimplente</option>
                       </select>
+
+                      <button
+                        onClick={() => onDeleteStudent(stud.id)}
+                        id={`btn-delete-student-${stud.id}`}
+                        className="p-2.5 bg-red-950/25 hover:bg-red-900/40 text-red-400 border border-red-500/20 hover:border-red-500/50 rounded-xl transition cursor-pointer"
+                        title="Remover este aluno de forma permanente"
+                      >
+                        <Trash2 size={13} />
+                      </button>
                     </div>
                   </div>
                 );
@@ -403,6 +416,18 @@ export default function AdminPanel({
                   value={studentEmail}
                   onChange={(e) => setStudentEmail(e.target.value)}
                   placeholder="Ex: pedro@email.com"
+                  className="w-full bg-[#050505] border border-[#222] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#D4FF00]"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[9px] text-gray-550 uppercase font-black tracking-widest block mb-1">Data de Adesão / Matrícula</label>
+                <input
+                  type="date"
+                  id="admin-form-student-registration-date"
+                  required
+                  value={studentRegistrationDate}
+                  onChange={(e) => setStudentRegistrationDate(e.target.value)}
                   className="w-full bg-[#050505] border border-[#222] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#D4FF00]"
                 />
               </div>

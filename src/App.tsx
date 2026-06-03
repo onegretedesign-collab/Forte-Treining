@@ -389,8 +389,8 @@ export default function App() {
     }));
   };
 
-  const handleAddStudentByAdmin = (name: string, email: string, status: PaymentStatus) => {
-    const isToday = new Date().toISOString().split('T')[0];
+  const handleAddStudentByAdmin = (name: string, email: string, status: PaymentStatus, registrationDate?: string) => {
+    const isToday = registrationDate || new Date().toISOString().split('T')[0];
     const newStudentId = `student-${Date.now()}`;
     const newStudent: StudentProfile = {
       id: newStudentId,
@@ -415,6 +415,35 @@ export default function App() {
         'Domingo': { planId: 'rest', completed: false },
       }
     }));
+  };
+
+  const handleDeleteStudent = (id: string) => {
+    const studentToDelete = students.find(s => s.id === id);
+    if (!studentToDelete) return;
+
+    if (confirm(`Deseja realmente excluir o aluno "${studentToDelete.name}" de forma permanente?`)) {
+      setStudents(prev => prev.filter(s => s.id !== id));
+      
+      // Clean up weekly schedules
+      setWeeklySchedules(prev => {
+        const cleaned = { ...prev };
+        delete cleaned[id];
+        return cleaned;
+      });
+
+      // If simulated active student login matches, shift simulator focus
+      if (currentStudentId === id) {
+        const remaining = students.filter(s => s.id !== id);
+        if (remaining.length > 0) {
+          setCurrentStudentId(remaining[0].id);
+        } else {
+          setIsStudentLoggedIn(false);
+          setCurrentStudentId('');
+        }
+      }
+      
+      alert(`Aluno "${studentToDelete.name}" excluído do sistema permanentemente.`);
+    }
   };
 
   const handleAddExerciseByAdmin = (name: string, muscleGroup: string, instructions: string) => {
@@ -806,6 +835,7 @@ export default function App() {
                 onUpdateStudentStatus={handleUpdateStudentStatus}
                 onAddStudent={handleAddStudentByAdmin}
                 onAddExercise={handleAddExerciseByAdmin}
+                onDeleteStudent={handleDeleteStudent}
               />
               
               {/* Safe dynamic triggers inside logged admin space */}
