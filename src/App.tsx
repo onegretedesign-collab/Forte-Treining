@@ -34,8 +34,12 @@ import {
   User,
   UserPlus,
   LogIn,
-  Phone
+  Phone,
+  X,
+  Flame
 } from 'lucide-react';
+
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
   // --- Persistent LocalState ---
@@ -98,6 +102,81 @@ export default function App() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('forte_admin_authenticated') === 'true';
   });
+
+  // --- Toast/Alert State for Daily Workout Progression ---
+  const [toast, setToast] = useState<{
+    show: boolean;
+    title: string;
+    message: string;
+    type: 'pending' | 'completed' | 'rest';
+  } | null>(null);
+
+  const [hasShownToast, setHasShownToast] = useState<boolean>(false);
+
+  // Reset toast visibility on logout
+  useEffect(() => {
+    if (!isStudentLoggedIn) {
+      setHasShownToast(false);
+      setToast(null);
+    }
+  }, [isStudentLoggedIn]);
+
+  // Analytical trigger for Toast Alert based on current student's daily agenda
+  useEffect(() => {
+    if (isStudentLoggedIn && currentStudentId && !hasShownToast) {
+      const studentSched = weeklySchedules[currentStudentId];
+      if (!studentSched) return;
+
+      const weekdaysPT: WeekDay[] = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+      const todayName = weekdaysPT[new Date().getDay()];
+      const todaySched = studentSched[todayName];
+
+      if (!todaySched) return;
+
+      const matchedStudent = students.find(s => s.id === currentStudentId);
+      const studentName = matchedStudent ? matchedStudent.name : 'Aluno';
+
+      const timer = setTimeout(() => {
+        if (todaySched.completed) {
+          setToast({
+            show: true,
+            title: 'Foco Total Mantido! ⚡',
+            message: `Olá, ${studentName}! Seu treino de hoje já foi concluído e registrado com sucesso. Excelente progresso!`,
+            type: 'completed'
+          });
+        } else if (todaySched.planId === 'rest') {
+          setToast({
+            show: true,
+            title: 'Recuperação Ativa Ativada 🧘',
+            message: `Olá, ${studentName}! Hoje seu cronograma indica descanso ativo. Seu corpo precisa de repouso!`,
+            type: 'rest'
+          });
+        } else {
+          const plan = SUGGESTED_PLANS.find(p => p.id === todaySched.planId);
+          const planName = plan ? plan.title.replace('Ficha - ', '') : 'Treino Recomendado';
+          setToast({
+            show: true,
+            title: 'Treino do Dia Pendente! 🔥',
+            message: `Olá, ${studentName}! Você tem o treino de "${planName}" pendente de conclusão para hoje. Vamos começar?`,
+            type: 'pending'
+          });
+        }
+        setHasShownToast(true);
+      }, 1500); // Smooth delay to trigger right after load/login transitions
+
+      return () => clearTimeout(timer);
+    }
+  }, [isStudentLoggedIn, currentStudentId, hasShownToast, weeklySchedules, students]);
+
+  // Toast self-dismiss timer
+  useEffect(() => {
+    if (toast && toast.show) {
+      const timer = setTimeout(() => {
+        setToast(prev => prev ? { ...prev, show: false } : null);
+      }, 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   // Sync to database simulated storage
   useEffect(() => {
@@ -471,11 +550,11 @@ export default function App() {
           </div>
 
           {/* Core Tab Navigation Switche selector */}
-          <nav className="flex bg-[#121212] p-1 rounded-2xl border border-[#222] w-full md:w-auto">
+          <nav className="flex items-center gap-1.5 bg-[#121212] p-1 rounded-2xl border border-[#222] w-full md:w-auto">
             <button
               id="nav-tab-student"
               onClick={() => setActiveTab('student')}
-              className={`w-full md:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all uppercase italic tracking-tighter ${
+              className={`flex-1 md:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all uppercase italic tracking-tighter ${
                 activeTab === 'student'
                   ? 'bg-black text-[#D4FF00] border border-[#222] shadow-inner'
                   : 'text-neutral-400 hover:text-white'
@@ -484,6 +563,20 @@ export default function App() {
               <Smartphone size={14} className={activeTab === 'student' ? 'text-[#D4FF00]' : ''} />
               Área do Aluno
             </button>
+
+            {isStudentLoggedIn && (
+              <button
+                onClick={() => {
+                  setIsStudentLoggedIn(false);
+                  setActiveSession(null);
+                  alert('Sessão encerrada com sucesso.');
+                }}
+                className="px-5 py-2.5 rounded-xl text-xs font-black uppercase italic tracking-tighter text-red-500 hover:text-white bg-red-950/25 hover:bg-red-900/40 border border-red-500/30 transition shrink-0 cursor-pointer"
+                title="Sair da conta de aluno"
+              >
+                Sair
+              </button>
+            )}
           </nav>
 
           {/* Dynamic Accountability/Vibe Badge */}
@@ -507,19 +600,6 @@ export default function App() {
                 </p>
               )}
             </div>
-            {isStudentLoggedIn && (
-              <button
-                onClick={() => {
-                  setIsStudentLoggedIn(false);
-                  setActiveSession(null);
-                  alert('Sessão encerrada com sucesso.');
-                }}
-                className="text-[10px] text-red-400 hover:text-white bg-red-950/20 hover:bg-red-950/50 border border-red-500/20 px-3 py-1.5 rounded-xl transition-all cursor-pointer font-bold uppercase tracking-wider"
-                title="Sair da conta de aluno"
-              >
-                Sair
-              </button>
-            )}
 
             <div className="w-10 h-10 rounded-full border-2 border-[#D4FF00] p-0.5 shrink-0 hidden lg:flex items-center justify-center">
               <div className="w-full h-full bg-neutral-900 rounded-full flex items-center justify-center font-black text-xs text-[#D4FF00] italic">
@@ -834,6 +914,86 @@ export default function App() {
           </p>
         </div>
       </footer>
+
+      {/* Toast Alerta de Treino do Dia */}
+      <AnimatePresence>
+        {toast && toast.show && (
+          <motion.div
+            id="workout-alert-toast"
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 26 }}
+            className={`fixed bottom-6 right-4 left-4 sm:left-auto sm:right-6 sm:w-[380px] z-50 bg-[#121212]/95 border ${
+              toast.type === 'pending'
+                ? 'border-[#D4FF00]'
+                : toast.type === 'completed'
+                ? 'border-emerald-500/50'
+                : 'border-blue-500/35'
+            } p-5 rounded-2xl shadow-2xl shadow-black/90 flex items-start gap-4 backdrop-blur-md`}
+          >
+            {/* Left Status Indicator Accent Icon */}
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+              toast.type === 'pending'
+                ? 'bg-[#D4FF00]/10 text-[#D4FF00]'
+                : toast.type === 'completed'
+                ? 'bg-emerald-500/10 text-emerald-400'
+                : 'bg-blue-500/10 text-blue-400'
+            }`}>
+              {toast.type === 'pending' ? (
+                <Flame className="animate-pulse" size={18} />
+              ) : toast.type === 'completed' ? (
+                <Check size={18} className="stroke-[3]" />
+              ) : (
+                <Sparkles size={18} />
+              )}
+            </div>
+
+            <div className="flex-1 space-y-1.5 text-left">
+              <h4 className="font-black text-xs uppercase tracking-wider text-white flex items-center gap-1.5">
+                {toast.title}
+                {toast.type === 'pending' && (
+                  <span className="inline-flex w-1.5 h-1.5 rounded-full bg-[#D4FF00] animate-ping" />
+                )}
+              </h4>
+              <p className="text-xs text-neutral-400 leading-relaxed">
+                {toast.message}
+              </p>
+              
+              {toast.type === 'pending' && (
+                <div className="pt-1.5">
+                  <button
+                    onClick={() => {
+                      setToast(null);
+                      const studentSched = weeklySchedules[currentStudentId];
+                      const weekdaysPT: WeekDay[] = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+                      const todayName = weekdaysPT[new Date().getDay()];
+                      const todaySched = studentSched ? studentSched[todayName] : null;
+                      if (todaySched && todaySched.planId !== 'rest') {
+                        handleStartWorkoutSession(todaySched.planId);
+                      } else {
+                        handleStartWorkoutSession('plan-gym-hypertrophy');
+                      }
+                    }}
+                    className="text-[10px] font-black uppercase text-black bg-[#D4FF00] hover:bg-white px-3.5 py-2 rounded-lg transition-all shrink-0 font-sans cursor-pointer inline-block"
+                  >
+                    🚀 Começar Treino
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Manual Dismiss Trigger Button */}
+            <button
+              onClick={() => setToast(prev => prev ? { ...prev, show: false } : null)}
+              className="text-neutral-500 hover:text-white transition p-1 shrink-0 cursor-pointer"
+              title="Fechar alerta"
+            >
+              <X size={14} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
