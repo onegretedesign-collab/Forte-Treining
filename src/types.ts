@@ -66,3 +66,14 @@ export interface TrainingLog {
   totalWeightLifted: number; // kg sum of weight * completed reps
   completedSetsCount: number;
 }
+
+export type WeekDay = 'Segunda' | 'Terça' | 'Quarta' | 'Quinta' | 'Sexta' | 'Sábado' | 'Domingo';
+
+export interface WeekDaySchedule {
+  planId: string; // plan ID or 'rest'
+  completed: boolean;
+  completedAt?: string; // YYYY-MM-DD
+}
+
+export type StudentWeeklySchedule = Record<WeekDay, WeekDaySchedule>;
+

@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { StudentProfile, Exercise, TrainingLog, ActiveWorkoutSession, PaymentStatus } from './types';
+import { StudentProfile, Exercise, TrainingLog, ActiveWorkoutSession, PaymentStatus, WeekDay, StudentWeeklySchedule } from './types';
 import { INITIAL_STUDENTS, INITIAL_EXERCISES, MOCK_TRAINING_LOGS, SUGGESTED_PLANS } from './mockData';
 
 // Component Imports
@@ -54,6 +54,35 @@ export default function App() {
     return saved ? JSON.parse(saved) : MOCK_TRAINING_LOGS;
   });
 
+  const [weeklySchedules, setWeeklySchedules] = useState<Record<string, StudentWeeklySchedule>>(() => {
+    const saved = localStorage.getItem('forte_weekly_schedules');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Erro ao carregar cronogramas de treino:", e);
+      }
+    }
+    const initial: Record<string, StudentWeeklySchedule> = {};
+    const defaultStudents = [...INITIAL_STUDENTS];
+    defaultStudents.forEach(st => {
+      const hasAcademia = (st.trainingLocation || 'Academia').toLowerCase() === 'academia';
+      const primaryPlan = hasAcademia ? 'plan-gym-hypertrophy' : 'plan-home-loss';
+      const secondaryPlan = hasAcademia ? 'plan-gym-strength' : 'plan-home-conditioning';
+      
+      initial[st.id] = {
+        'Segunda': { planId: primaryPlan, completed: false },
+        'Terça': { planId: secondaryPlan, completed: false },
+        'Quarta': { planId: 'rest', completed: false },
+        'Quinta': { planId: primaryPlan, completed: false },
+        'Sexta': { planId: secondaryPlan, completed: false },
+        'Sábado': { planId: 'rest', completed: false },
+        'Domingo': { planId: 'rest', completed: false },
+      };
+    });
+    return initial;
+  });
+
   const [currentStudentId, setCurrentStudentId] = useState<string>(() => {
     const active = localStorage.getItem('forte_active_student_id');
     return active || 'student-1'; // Rodrigo Silva (Paid)
@@ -92,6 +121,10 @@ export default function App() {
   }, [logs]);
 
   useEffect(() => {
+    localStorage.setItem('forte_weekly_schedules', JSON.stringify(weeklySchedules));
+  }, [weeklySchedules]);
+
+  useEffect(() => {
     localStorage.setItem('forte_active_student_id', currentStudentId);
   }, [currentStudentId]);
 
@@ -104,6 +137,25 @@ export default function App() {
       setStudents(INITIAL_STUDENTS);
       setExercises(INITIAL_EXERCISES);
       setLogs(MOCK_TRAINING_LOGS);
+      
+      const initial: Record<string, StudentWeeklySchedule> = {};
+      INITIAL_STUDENTS.forEach(st => {
+        const hasAcademia = (st.trainingLocation || 'Academia').toLowerCase() === 'academia';
+        const primaryPlan = hasAcademia ? 'plan-gym-hypertrophy' : 'plan-home-loss';
+        const secondaryPlan = hasAcademia ? 'plan-gym-strength' : 'plan-home-conditioning';
+        
+        initial[st.id] = {
+          'Segunda': { planId: primaryPlan, completed: false },
+          'Terça': { planId: secondaryPlan, completed: false },
+          'Quarta': { planId: 'rest', completed: false },
+          'Quinta': { planId: primaryPlan, completed: false },
+          'Sexta': { planId: secondaryPlan, completed: false },
+          'Sábado': { planId: 'rest', completed: false },
+          'Domingo': { planId: 'rest', completed: false },
+        };
+      });
+      setWeeklySchedules(initial);
+      
       setCurrentStudentId('student-1');
       setIsStudentLoggedIn(false);
       setIsAdminAuthenticated(false);
@@ -201,6 +253,8 @@ export default function App() {
     });
 
     const isToday = new Date().toISOString().split('T')[0];
+    const weekdaysPT: WeekDay[] = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+    const todayName = weekdaysPT[new Date().getDay()];
 
     const newLog: TrainingLog = {
       id: `log-${Date.now()}`,
@@ -209,6 +263,30 @@ export default function App() {
       totalWeightLifted,
       completedSetsCount
     };
+
+    // Mark today's weekday schedule as completed
+    setWeeklySchedules(prev => {
+      const studentSched = prev[currentStudentId] || {
+        'Segunda': { planId: 'rest', completed: false },
+        'Terça': { planId: 'rest', completed: false },
+        'Quarta': { planId: 'rest', completed: false },
+        'Quinta': { planId: 'rest', completed: false },
+        'Sexta': { planId: 'rest', completed: false },
+        'Sábado': { planId: 'rest', completed: false },
+        'Domingo': { planId: 'rest', completed: false },
+      };
+      return {
+        ...prev,
+        [currentStudentId]: {
+          ...studentSched,
+          [todayName]: {
+            ...studentSched[todayName],
+            completed: true,
+            completedAt: isToday
+          }
+        }
+      };
+    });
 
     setLogs(prev => [newLog, ...prev]);
     setActiveSession(null);
@@ -234,8 +312,9 @@ export default function App() {
 
   const handleAddStudentByAdmin = (name: string, email: string, status: PaymentStatus) => {
     const isToday = new Date().toISOString().split('T')[0];
+    const newStudentId = `student-${Date.now()}`;
     const newStudent: StudentProfile = {
-      id: `student-${Date.now()}`,
+      id: newStudentId,
       name,
       email,
       role: 'aluno',
@@ -245,6 +324,18 @@ export default function App() {
     };
 
     setStudents(prev => [...prev, newStudent]);
+    setWeeklySchedules(prev => ({
+      ...prev,
+      [newStudentId]: {
+        'Segunda': { planId: 'plan-gym-hypertrophy', completed: false },
+        'Terça': { planId: 'plan-gym-strength', completed: false },
+        'Quarta': { planId: 'rest', completed: false },
+        'Quinta': { planId: 'plan-gym-hypertrophy', completed: false },
+        'Sexta': { planId: 'plan-gym-strength', completed: false },
+        'Sábado': { planId: 'rest', completed: false },
+        'Domingo': { planId: 'rest', completed: false },
+      }
+    }));
   };
 
   const handleAddExerciseByAdmin = (name: string, muscleGroup: string, instructions: string) => {
@@ -268,8 +359,9 @@ export default function App() {
 
   const handleRegisterStudentFromWelcome = (name: string, age: number, email: string, contact: string) => {
     const isToday = new Date().toISOString().split('T')[0];
+    const newStudentId = `student-${Date.now()}`;
     const newStudent: StudentProfile = {
-      id: `student-${Date.now()}`,
+      id: newStudentId,
       name,
       email,
       role: 'aluno',
@@ -281,7 +373,19 @@ export default function App() {
     };
 
     setStudents(prev => [...prev, newStudent]);
-    setCurrentStudentId(newStudent.id);
+    setWeeklySchedules(prev => ({
+      ...prev,
+      [newStudentId]: {
+        'Segunda': { planId: 'plan-gym-hypertrophy', completed: false },
+        'Terça': { planId: 'plan-gym-strength', completed: false },
+        'Quarta': { planId: 'rest', completed: false },
+        'Quinta': { planId: 'plan-gym-hypertrophy', completed: false },
+        'Sexta': { planId: 'plan-gym-strength', completed: false },
+        'Sábado': { planId: 'rest', completed: false },
+        'Domingo': { planId: 'rest', completed: false },
+      }
+    }));
+    setCurrentStudentId(newStudentId);
     setIsStudentLoggedIn(true);
     setActiveTab('student');
     alert(`Matrícula realizada com sucesso! Seja bem-vindo, ${name}!`);
@@ -305,6 +409,31 @@ export default function App() {
       return true;
     }
     return false;
+  };
+
+  const handleUpdateWeeklySchedule = (day: WeekDay, planId: string) => {
+    setWeeklySchedules(prev => {
+      const fallbackSchedule = {
+        'Segunda': { planId: 'plan-gym-hypertrophy', completed: false },
+        'Terça': { planId: 'plan-gym-strength', completed: false },
+        'Quarta': { planId: 'rest', completed: false },
+        'Quinta': { planId: 'plan-gym-hypertrophy', completed: false },
+        'Sexta': { planId: 'plan-gym-strength', completed: false },
+        'Sábado': { planId: 'rest', completed: false },
+        'Domingo': { planId: 'rest', completed: false },
+      };
+      const currentSched = prev[currentStudentId] || fallbackSchedule;
+      return {
+        ...prev,
+        [currentStudentId]: {
+          ...currentSched,
+          [day]: {
+            ...currentSched[day],
+            planId
+          }
+        }
+      };
+    });
   };
 
   if (!isStudentLoggedIn && !isAdminAuthenticated) {
@@ -488,6 +617,16 @@ export default function App() {
                         exercises={exercises}
                         logs={logs}
                         onStartWorkout={handleStartWorkoutSession}
+                        weeklySchedule={weeklySchedules[currentUser.id] || {
+                          'Segunda': { planId: 'plan-gym-hypertrophy', completed: false },
+                          'Terça': { planId: 'plan-gym-strength', completed: false },
+                          'Quarta': { planId: 'rest', completed: false },
+                          'Quinta': { planId: 'plan-gym-hypertrophy', completed: false },
+                          'Sexta': { planId: 'plan-gym-strength', completed: false },
+                          'Sábado': { planId: 'rest', completed: false },
+                          'Domingo': { planId: 'rest', completed: false },
+                        }}
+                        onUpdateSchedule={handleUpdateWeeklySchedule}
                       />
                     )}
                   </>
