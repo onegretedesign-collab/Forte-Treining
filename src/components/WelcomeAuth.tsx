@@ -103,10 +103,13 @@ export default function WelcomeAuth({
         
         {/* Left column: Branding presentation */}
         <div className="lg:col-span-5 space-y-6 text-center lg:text-left">
-          <div className="inline-flex items-center justify-center bg-neutral-900 border border-[#222] px-6 py-3 rounded-2xl">
-            <span className="text-xs text-[#EFE71D] font-mono font-black uppercase tracking-widest leading-none">
-              MENDES FITNESS v2.0
-            </span>
+          <div className="flex justify-center lg:justify-start">
+            <img 
+              src="https://i.postimg.cc/VNqg3g35/LOGO-MENDESSS.png" 
+              alt="Mendes Fitness Logo" 
+              className="h-[156px] sm:h-[186px] max-h-[22vh] w-auto object-contain select-none animate-pulse" 
+              referrerPolicy="no-referrer"
+            />
           </div>
 
           <div className="space-y-3">

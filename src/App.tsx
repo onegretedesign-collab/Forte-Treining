@@ -115,6 +115,9 @@ export default function App() {
     type: 'ios' | 'android' | 'other' | 'iframe';
   }>({ show: false, message: '', type: 'other' });
 
+  const [showInstallConfirm, setShowInstallConfirm] = useState<boolean>(false);
+  const [userConfirmedInstall, setUserConfirmedInstall] = useState<boolean>(false);
+
   // Auto Dismiss Splash Screen
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -128,6 +131,12 @@ export default function App() {
     const handleBeforeInstallPrompt = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      // Automatically show an enticing toast saying click to install
+      setInstallToast({
+        show: true,
+        message: 'Disponível para Instalação no seu aparelho! Toque aqui para instalar o aplicativo Mendes Fitness.',
+        type: 'android'
+      });
     };
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     return () => {
@@ -135,48 +144,23 @@ export default function App() {
     };
   }, []);
 
-  const handleInstallApp = async () => {
+  const handleInstallApp = () => {
+    setUserConfirmedInstall(false);
+    setShowInstallConfirm(true);
+  };
+
+  const handleConfirmInstallAction = async () => {
+    setUserConfirmedInstall(true);
     if (deferredPrompt) {
       try {
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
           setDeferredPrompt(null);
+          setShowInstallConfirm(false);
         }
       } catch (err) {
         console.error('Erro na instalação nativa:', err);
-      }
-    } else {
-      // Analyze device runtime to assist direct downoad/install guidance without heavy modals
-      const isIframe = window.self !== window.top;
-      const ua = window.navigator.userAgent.toLowerCase();
-      const isiOS = /iphone|ipad|ipod/.test(ua);
-      const isAndroid = /android/.test(ua);
-
-      if (isIframe) {
-        setInstallToast({
-          show: true,
-          message: 'Para baixar direto no celular, abra o link do app Mendes Fitness no Safari (iPhone) ou Chrome (Android)!',
-          type: 'iframe'
-        });
-      } else if (isiOS) {
-        setInstallToast({
-          show: true,
-          message: 'Instalar no iPhone: Toque no botão de Compartilhar ↑ na barra inferior do Safari e em "Adicionar à Tela de Início".',
-          type: 'ios'
-        });
-      } else if (isAndroid) {
-        setInstallToast({
-          show: true,
-          message: 'Baixar direto: Toque nos três pontinhos (: ) no canto superior do Chrome e escolha "Instalar aplicativo".',
-          type: 'android'
-        });
-      } else {
-        setInstallToast({
-          show: true,
-          message: 'Para baixar no seu celular, acesse o site pelo navegador Chrome ou Safari e clique em Baixar App!',
-          type: 'other'
-        });
       }
     }
   };
@@ -641,13 +625,13 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
           
           {/* Logo & Slogan */}
-          <div className="flex flex-col items-center md:items-start text-center md:text-left select-none">
-            <h1 className="text-2xl font-black tracking-tighter uppercase italic text-white leading-none">
-              Mendes <span className="text-[#EFE71D]">Fitness</span>
-            </h1>
-            <p className="text-[10px] text-[#EFE71D] uppercase font-black tracking-widest leading-none mt-1">
-              A ACADEMIA COM RESULTADOS
-            </p>
+          <div className="flex items-center justify-center md:justify-start select-none">
+            <img 
+              src="https://i.postimg.cc/VNqg3g35/LOGO-MENDESSS.png" 
+              alt="Mendes Fitness Logo" 
+              className="h-[156px] sm:h-[186px] max-h-[22vh] w-auto object-contain" 
+              referrerPolicy="no-referrer"
+            />
           </div>
 
           <div className="flex items-center gap-3 w-full md:w-auto justify-end">
@@ -1127,13 +1111,13 @@ export default function App() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="relative z-10 space-y-6 flex flex-col items-center"
             >
-              <div className="space-y-3">
-                <h2 className="text-5xl sm:text-6xl text-white font-sans font-black italic uppercase tracking-tighter">
-                  MENDES <span className="text-[#EFE71D]">FITNESS</span>
-                </h2>
-                <p className="font-mono text-[10px] text-[#EFE71D] tracking-[0.25em] font-black uppercase text-center">
-                  A ACADEMIA COM RESULTADOS • ECOSSISTEMA BIOMECÂNICO
-                </p>
+              <div className="flex flex-col items-center select-none">
+                <img 
+                  src="https://i.postimg.cc/VNqg3g35/LOGO-MENDESSS.png" 
+                  alt="Mendes Fitness Logo" 
+                  className="w-[870px] sm:w-[1050px] max-w-[58vw] h-auto object-contain" 
+                  referrerPolicy="no-referrer"
+                />
               </div>
 
               {/* Progress visual feedback bar */}
@@ -1163,7 +1147,12 @@ export default function App() {
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.95 }}
-            className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:max-w-md bg-[#121212]/95 backdrop-blur-md border-2 border-[#EFE71D]/40 rounded-2xl p-4 z-50 flex items-start gap-3.5 shadow-2xl shadow-black/90"
+            onClick={() => {
+              setInstallToast(prev => ({ ...prev, show: false }));
+              setShowInstallConfirm(true);
+            }}
+            className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:max-w-md bg-[#121212]/98 backdrop-blur-md border-2 border-[#EFE71D]/60 rounded-2xl p-4 z-50 flex items-start gap-3.5 shadow-2xl shadow-black/95 cursor-pointer hover:border-[#EFE71D] hover:bg-neutral-900/90 transition-all duration-300"
+            title="Clique para Baixar o Aplicativo"
           >
             <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-[#EFE71D]/20 flex items-center justify-center shrink-0">
               <Download size={18} className="text-[#EFE71D] animate-bounce" />
@@ -1171,7 +1160,7 @@ export default function App() {
 
             <div className="flex-1 min-w-0">
               <span className="text-[10px] text-[#EFE71D] font-mono tracking-widest font-black uppercase block mb-1">
-                INSTALAÇÃO RÁPIDA
+                INSTALAÇÃO RÁPIDA (TOQUE AQUI)
               </span>
               <p className="text-xs text-neutral-200 font-semibold leading-relaxed">
                 {installToast.message}
@@ -1179,11 +1168,170 @@ export default function App() {
             </div>
 
             <button
-              onClick={() => setInstallToast(prev => ({ ...prev, show: false }))}
+              onClick={(e) => {
+                e.stopPropagation();
+                setInstallToast(prev => ({ ...prev, show: false }));
+              }}
               className="p-1 rounded-lg bg-neutral-900/60 border border-neutral-800 text-neutral-400 hover:text-white transition cursor-pointer"
             >
               <X size={14} />
             </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🌟 PREMIUM INTERACTIVE DOWNLOAD / INSTALL CONFIRMATION MODAL */}
+      <AnimatePresence>
+        {showInstallConfirm && (
+          <motion.div
+            id="pwa-install-confirm-dialog"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 font-sans text-left"
+          >
+            <motion.div
+              initial={{ scale: 0.92, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.92, y: 15 }}
+              className="bg-[#121212] border-2 border-[#EFE71D]/30 rounded-3xl p-6 sm:p-8 max-w-md w-full relative space-y-6 shadow-2xl shadow-black/90"
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-1">
+                  <span className="text-[9px] text-[#EFE71D] font-mono tracking-[0.25em] font-black uppercase">
+                    MENDES FITNESS APP
+                  </span>
+                  <h3 className="font-black text-white text-2xl uppercase tracking-tighter leading-none italic">
+                    Instalar <span className="text-[#EFE71D]">Mendes Fitness</span>
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setShowInstallConfirm(false)}
+                  className="w-8 h-8 rounded-full bg-neutral-900 border border-[#222] flex items-center justify-center text-neutral-400 hover:text-white hover:border-neutral-700 transition cursor-pointer"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+
+              {/* Core interactive content */}
+              {!userConfirmedInstall ? (
+                <div className="space-y-5">
+                  <p className="text-sm text-neutral-300 leading-relaxed font-semibold">
+                    Deseja realizar o download e instalar o aplicativo <strong className="text-white">Mendes Fitness</strong> no seu aparelho?
+                  </p>
+                  
+                  <div className="bg-black/40 p-4 rounded-2xl border border-neutral-900/60 space-y-2">
+                    <p className="text-xs text-neutral-400 leading-relaxed">
+                      💡 Sendo instalado, você terá acesso imediato às suas fichas de treino na tela inicial de forma rápida, em tela cheia e sem precisar usar o navegador!
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      onClick={() => setShowInstallConfirm(false)}
+                      className="flex-1 py-3 text-xs uppercase italic font-black text-neutral-400 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-xl transition cursor-pointer"
+                    >
+                      Não, Cancelar
+                    </button>
+                    <button
+                      onClick={handleConfirmInstallAction}
+                      className="flex-1 py-3 text-xs uppercase italic font-black text-black bg-[#EFE71D] hover:bg-white rounded-xl transition cursor-pointer shadow-lg shadow-[#EFE71D]/15 flex items-center justify-center gap-1.5"
+                    >
+                      <Download size={13} className="stroke-[3]" />
+                      Sim, Baixar / Instalar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  {/* Native Prompt handled vs Assistive guides shown immediately */}
+                  {deferredPrompt ? (
+                    <div className="space-y-4 text-center py-4">
+                      <div className="w-12 h-12 rounded-full bg-[#EFE71D]/10 mx-auto flex items-center justify-center">
+                        <Check size={22} className="text-[#EFE71D]" />
+                      </div>
+                      <p className="text-sm text-neutral-200 font-bold">
+                        Confirmado! Siga o prompt que surgiu no seu navegador para baixar o app na sua tela inicial!
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 text-xs font-bold text-[#EFE71D] uppercase tracking-wider">
+                        <Smartphone size={14} /> Como Baixar e Instalar:
+                      </div>
+
+                      {/* Device dynamic content detection on prompt success */}
+                      {(() => {
+                        const isIframe = window.self !== window.top;
+                        const ua = window.navigator.userAgent.toLowerCase();
+                        const isiOS = /iphone|ipad|ipod/.test(ua);
+                        const isAndroid = /android/.test(ua);
+
+                        if (isIframe) {
+                          return (
+                            <div className="bg-black/60 p-4 rounded-2xl border border-[#EFE71D]/25 space-y-3">
+                              <span className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-1.5 italic">
+                                <Share2 size={12} className="text-[#EFE71D]" /> VISUALIZAÇÃO EM PRÉ-VIA
+                              </span>
+                              <p className="text-xs text-neutral-300 leading-relaxed font-medium">
+                                Você está visualizando o app em uma prévia segura. Para baixar no seu celular:
+                              </p>
+                              <ol className="text-xs text-neutral-400 space-y-2 pl-4 list-decimal leading-relaxed">
+                                <li>Abra o link do app Mendes Fitness no navegador padrão do seu celular <strong className="text-white">(Safari ou Chrome)</strong>.</li>
+                                <li>Clique no botão <strong className="text-[#EFE71D]">"Baixar App"</strong> no topo da tela do site para usar a instalação instantânea!</li>
+                              </ol>
+                            </div>
+                          );
+                        }
+
+                        if (isiOS) {
+                          return (
+                            <div className="bg-[#1a1712] p-4 rounded-2xl border border-[#EFE71D]/30 space-y-3">
+                              <span className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-1.5 italic">
+                                <Share2 size={12} className="text-[#EFE71D]" /> iPhone (Safari)
+                              </span>
+                              <p className="text-xs text-neutral-300 leading-relaxed font-medium">
+                                Para salvar na sua tela de início direto do iPhone:
+                              </p>
+                              <ol className="text-xs text-neutral-400 space-y-2 pl-4 list-decimal leading-relaxed">
+                                <li>Toque no botão de <strong className="text-white inline-flex items-center gap-0.5">Compartilhar <Share2 size={11} /></strong> na barra inferior do Safari.</li>
+                                <li>Role as opções para cima e selecione <strong className="text-white font-bold">"Adicionar à Tela de Início"</strong>.</li>
+                                <li>Toque em <strong className="text-[#EFE71D]">"Adicionar"</strong> no canto superior direito para confirmar.</li>
+                              </ol>
+                            </div>
+                          );
+                        }
+
+                        // Android or generic (e.g. standard Chrome/Desktop fallback)
+                        return (
+                          <div className="bg-[#101511] p-4 rounded-2xl border border-neutral-900 space-y-3">
+                            <span className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-1.5 italic">
+                              <Monitor size={12} className="text-[#EFE71D]" /> Navegador Chrome/Android
+                            </span>
+                            <p className="text-xs text-neutral-300 leading-relaxed font-medium">
+                              Siga as orientações para baixar e instalar sem segredos:
+                            </p>
+                            <ol className="text-xs text-neutral-400 space-y-2 pl-4 list-decimal leading-relaxed">
+                              <li>Toque nos <strong className="text-white">três pontinhos ⋮ (menu)</strong> localizados no canto superior direito do seu navegador Chrome.</li>
+                              <li>Escolha a opção <strong className="text-white">"Instalar aplicativo"</strong> ou <strong className="text-white">"Adicionar à tela inicial"</strong>.</li>
+                              <li>Toque em <strong className="text-[#EFE71D]">Instalar / Adicionar</strong> na janela pop-up do sistema de seu celular.</li>
+                            </ol>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => setShowInstallConfirm(false)}
+                    className="w-full py-3.5 bg-[#EFE71D] text-black font-black uppercase italic tracking-tighter rounded-xl text-xs hover:bg-white transition cursor-pointer shadow-lg shadow-[#EFE71D]/10 text-center"
+                  >
+                    Entendido, Começar Treino
+                  </button>
+                </div>
+              )}
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
