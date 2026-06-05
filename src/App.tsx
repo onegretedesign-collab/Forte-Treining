@@ -106,19 +106,8 @@ export default function App() {
     return localStorage.getItem('forte_admin_authenticated') === 'true';
   });
 
-  // Splash Screen and PWA Installation States
+  // Splash Screen State
   const [showSplash, setShowSplash] = useState<boolean>(true);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [installToast, setInstallToast] = useState<{
-    show: boolean;
-    message: string;
-    type: 'ios' | 'android' | 'other' | 'iframe';
-  }>({ show: false, message: '', type: 'other' });
-
-  const [showInstallConfirm, setShowInstallConfirm] = useState<boolean>(false);
-  const [userConfirmedInstall, setUserConfirmedInstall] = useState<boolean>(false);
-  const [isDownloading, setIsDownloading] = useState<boolean>(false);
-  const [downloadProgress, setDownloadProgress] = useState<number>(0);
 
   // Auto Dismiss Splash Screen
   useEffect(() => {
@@ -127,48 +116,6 @@ export default function App() {
     }, 2500);
     return () => clearTimeout(timer);
   }, []);
-
-  // Listen to mobile web app install prompt
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      // Automatically show an enticing toast saying click to install
-      setInstallToast({
-        show: true,
-        message: 'Disponível para Instalação no seu aparelho! Toque aqui para instalar o aplicativo Mendes Fitness.',
-        type: 'android'
-      });
-    };
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    };
-  }, []);
-
-  const handleInstallApp = async () => {
-    setUserConfirmedInstall(false);
-    setIsDownloading(false);
-    setDownloadProgress(0);
-
-    if (deferredPrompt) {
-      try {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          setDeferredPrompt(null);
-          setInstallToast(prev => ({ ...prev, show: false }));
-          setShowInstallConfirm(false);
-        }
-      } catch (err) {
-        console.error('Erro na instalação nativa:', err);
-      }
-    } else {
-      // If deferredPrompt is not available (e.g., Safari iOS or already installed or beforeinstallprompt not yet loaded),
-      // we show the assistive modal instructions.
-      setShowInstallConfirm(true);
-    }
-  };
 
   // --- Toast/Alert State for Daily Workout Progression ---
   const [toast, setToast] = useState<{
@@ -640,16 +587,6 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-            {/* App Installation Mobile Trigger button */}
-            <button
-              onClick={handleInstallApp}
-              className="flex items-center justify-center gap-1.5 px-4 py-2 bg-[#EFE71D] hover:bg-white text-black font-black uppercase tracking-tighter text-xs italic rounded-xl transition cursor-pointer shadow-md shadow-[#EFE71D]/10"
-              title="Instalar App no Celular"
-            >
-              <Download size={13} className="stroke-[3]" />
-              Baixar App
-            </button>
-
             {/* Core Tab Navigation Switche selector */}
             <nav className="flex items-center gap-1.5 bg-[#121212] p-1 rounded-2xl border border-[#222] flex-1 md:flex-initial">
             <button
@@ -1144,172 +1081,8 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* 🚀 ELEGANT DYNAMIC INSTALLATION TOAST (DISCRETE & NON-INTRUSIVE) */}
-      <AnimatePresence>
-        {installToast.show && (
-          <motion.div
-            id="app-install-toast-banner"
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.95 }}
-            onClick={() => {
-              setInstallToast(prev => ({ ...prev, show: false }));
-              handleInstallApp();
-            }}
-            className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:max-w-md bg-[#121212]/98 backdrop-blur-md border-2 border-[#EFE71D]/60 rounded-2xl p-4 z-50 flex items-start gap-3.5 shadow-2xl shadow-black/95 cursor-pointer hover:border-[#EFE71D] hover:bg-neutral-900/90 transition-all duration-300"
-            title="Clique para Baixar o Aplicativo"
-          >
-            <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-[#EFE71D]/20 flex items-center justify-center shrink-0">
-              <Download size={18} className="text-[#EFE71D] animate-bounce" />
-            </div>
 
-            <div className="flex-1 min-w-0">
-              <span className="text-[10px] text-[#EFE71D] font-mono tracking-widest font-black uppercase block mb-1">
-                INSTALAÇÃO RÁPIDA (TOQUE AQUI)
-              </span>
-              <p className="text-xs text-neutral-200 font-semibold leading-relaxed">
-                {installToast.message}
-              </p>
-            </div>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setInstallToast(prev => ({ ...prev, show: false }));
-              }}
-              className="p-1 rounded-lg bg-neutral-900/60 border border-neutral-800 text-neutral-400 hover:text-white transition cursor-pointer"
-            >
-              <X size={14} />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* 🌟 PREMIUM INTERACTIVE DOWNLOAD / INSTALL CONFIRMATION MODAL */}
-      <AnimatePresence>
-        {showInstallConfirm && (
-          <motion.div
-            id="pwa-install-confirm-dialog"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 font-sans text-left"
-          >
-            <motion.div
-              initial={{ scale: 0.92, y: 15 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.92, y: 15 }}
-              className="bg-[#121212] border-2 border-[#EFE71D]/30 rounded-3xl p-6 sm:p-8 max-w-md w-full relative space-y-6 shadow-2xl shadow-black/90"
-            >
-              {/* Header */}
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <span className="text-[9px] text-[#EFE71D] font-mono tracking-[0.25em] font-black uppercase">
-                    MENDES FITNESS APP
-                  </span>
-                  <h3 className="font-black text-white text-2xl uppercase tracking-tighter leading-none italic">
-                    Instalar <span className="text-[#EFE71D]">Mendes Fitness</span>
-                  </h3>
-                </div>
-                <button
-                  onClick={() => setShowInstallConfirm(false)}
-                  className="w-8 h-8 rounded-full bg-neutral-900 border border-[#222] flex items-center justify-center text-neutral-400 hover:text-white hover:border-neutral-700 transition cursor-pointer"
-                >
-                  <X size={14} />
-                </button>
-              </div>
-
-              {/* Core interactive content */}
-              <div className="space-y-5">
-                {/* Native Prompt handled vs Assistive guides shown immediately */}
-                {deferredPrompt ? (
-                  <div className="space-y-4 text-center py-4">
-                    <div className="w-12 h-12 rounded-full bg-[#EFE71D]/10 mx-auto flex items-center justify-center">
-                      <Check size={22} className="text-[#EFE71D]" />
-                    </div>
-                    <p className="text-sm text-neutral-200 font-bold">
-                      Confirmado! Siga o prompt que surgiu no seu navegador para baixar o app na sua tela inicial!
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#EFE71D] uppercase tracking-wider">
-                      <Smartphone size={14} /> Como Baixar e Instalar:
-                    </div>
-
-                    {/* Device dynamic content detection on prompt success */}
-                    {(() => {
-                        const isIframe = window.self !== window.top;
-                        const ua = window.navigator.userAgent.toLowerCase();
-                        const isiOS = /iphone|ipad|ipod/.test(ua);
-                        const isAndroid = /android/.test(ua);
-
-                        if (isIframe) {
-                          return (
-                            <div className="bg-black/60 p-4 rounded-2xl border border-[#EFE71D]/25 space-y-3">
-                              <span className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-1.5 italic">
-                                <Share2 size={12} className="text-[#EFE71D]" /> VISUALIZAÇÃO EM PRÉ-VIA
-                              </span>
-                              <p className="text-xs text-neutral-300 leading-relaxed font-medium">
-                                Você está visualizando o app em uma prévia segura. Para baixar no seu celular:
-                              </p>
-                              <ol className="text-xs text-neutral-400 space-y-2 pl-4 list-decimal leading-relaxed">
-                                <li>Abra o link do app Mendes Fitness no navegador padrão do seu celular <strong className="text-white">(Safari ou Chrome)</strong>.</li>
-                                <li>Clique no botão <strong className="text-[#EFE71D]">"Baixar App"</strong> no topo da tela do site para usar a instalação instantânea!</li>
-                              </ol>
-                            </div>
-                          );
-                        }
-
-                        if (isiOS) {
-                          return (
-                            <div className="bg-[#1a1712] p-4 rounded-2xl border border-[#EFE71D]/30 space-y-3">
-                              <span className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-1.5 italic">
-                                <Share2 size={12} className="text-[#EFE71D]" /> iPhone (Safari)
-                              </span>
-                              <p className="text-xs text-neutral-300 leading-relaxed font-medium">
-                                Para salvar na sua tela de início direto do iPhone:
-                              </p>
-                              <ol className="text-xs text-neutral-400 space-y-2 pl-4 list-decimal leading-relaxed">
-                                <li>Toque no botão de <strong className="text-white inline-flex items-center gap-0.5">Compartilhar <Share2 size={11} /></strong> na barra inferior do Safari.</li>
-                                <li>Role as opções para cima e selecione <strong className="text-white font-bold">"Adicionar à Tela de Início"</strong>.</li>
-                                <li>Toque em <strong className="text-[#EFE71D]">"Adicionar"</strong> no canto superior direito para confirmar.</li>
-                              </ol>
-                            </div>
-                          );
-                        }
-
-                        // Android or generic (e.g. standard Chrome/Desktop fallback)
-                        return (
-                          <div className="bg-[#101511] p-4 rounded-2xl border border-neutral-900 space-y-3">
-                            <span className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-1.5 italic">
-                              <Monitor size={12} className="text-[#EFE71D]" /> Navegador Chrome/Android
-                            </span>
-                            <p className="text-xs text-neutral-300 leading-relaxed font-medium">
-                              Siga as orientações para baixar e instalar sem segredos:
-                            </p>
-                            <ol className="text-xs text-neutral-400 space-y-2 pl-4 list-decimal leading-relaxed">
-                              <li>Toque nos <strong className="text-white">três pontinhos ⋮ (menu)</strong> localizados no canto superior direito do seu navegador Chrome.</li>
-                              <li>Escolha a opção <strong className="text-white">"Instalar aplicativo"</strong> ou <strong className="text-white">"Adicionar à tela inicial"</strong>.</li>
-                              <li>Toque em <strong className="text-[#EFE71D]">Instalar / Adicionar</strong> na janela pop-up do sistema de seu celular.</li>
-                            </ol>
-                          </div>
-                        );
-                      })()}
-                    </div>
-                  )}
-
-                  <button
-                    onClick={() => setShowInstallConfirm(false)}
-                    className="w-full py-3.5 bg-[#EFE71D] text-black font-black uppercase italic tracking-tighter rounded-xl text-xs hover:bg-white transition cursor-pointer shadow-lg shadow-[#EFE71D]/10 text-center"
-                  >
-                    Entendido, Começar Treino
-                  </button>
-                </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
