@@ -53,17 +53,17 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
 
   return (
     <div className="max-w-xl mx-auto bg-[#121212] border border-[#222] rounded-[2rem] overflow-hidden shadow-2xl p-6 sm:p-8 relative" id="onboarding-card">
-      <div className="absolute top-0 right-0 w-48 h-48 bg-[#D4FF00]/5 rounded-full blur-[85px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-48 h-48 bg-[#EFE71D]/5 rounded-full blur-[85px] pointer-events-none" />
 
       {/* Top Progress bar */}
       <div className="mb-8 relative z-10">
-        <div className="flex justify-between items-center text-[10px] text-neutral-500 mb-2 font-black uppercase tracking-widest italic">
+        <div className="flex justify-between items-center text-xs text-neutral-300 mb-2 font-black uppercase tracking-widest italic">
           <span>Sessão {step} de 4</span>
-          <span className="text-[#D4FF00] font-black">{Math.round((step / 4) * 100)}% Completado</span>
+          <span className="text-[#EFE71D] font-black">{Math.round((step / 4) * 100)}% Completado</span>
         </div>
-        <div className="h-1.5 w-full bg-[#050505] rounded-full overflow-hidden border border-[#222]">
+        <div className="h-2 w-full bg-[#050505] rounded-full overflow-hidden border border-[#222]">
           <div
-            className="h-full bg-[#D4FF00] transition-all duration-300"
+            className="h-full bg-[#EFE71D] transition-all duration-300"
             style={{ width: `${(step / 4) * 100}%` }}
           />
         </div>
@@ -73,12 +73,12 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
       <div className="min-h-[290px] relative z-10">
         {step === 1 && (
           <div className="space-y-6 animate-fadeIn">
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <h3 className="text-2xl font-black text-white flex items-center gap-2 uppercase tracking-tighter italic">
-                <User className="text-[#D4FF00]" size={20} />
+                <User className="text-[#EFE71D]" size={20} />
                 Dados Biométricos
               </h3>
-              <p className="text-xs text-neutral-400">
+              <p className="text-xs text-neutral-200 font-medium leading-relaxed">
                 Coleta de dados físicos para calibrar seu metabolismo residual de queima e cálculo automático de sobrecarga.
               </p>
             </div>
@@ -86,9 +86,9 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
             <div className="space-y-4">
               {/* Age Slider */}
               <div className="bg-black/40 p-5 rounded-2xl border border-[#222] space-y-3">
-                <div className="flex justify-between text-xs uppercase font-bold tracking-wider">
-                  <span className="text-neutral-500">Qual a sua idade?</span>
-                  <span className="text-[#D4FF00] font-mono font-black text-sm">{age} anos</span>
+                <div className="flex justify-between text-xs uppercase font-black tracking-widest">
+                  <span className="text-neutral-300">Qual a sua idade?</span>
+                  <span className="text-[#EFE71D] font-mono font-black text-sm">{age} anos</span>
                 </div>
                 <input
                   type="range"
@@ -97,37 +97,37 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
                   value={age}
                   id="onboard-age-slider"
                   onChange={(e) => setAge(parseInt(e.target.value))}
-                  className="w-full accent-[#D4FF00] h-1 bg-[#050505] rounded-lg cursor-pointer"
+                  className="w-full accent-[#EFE71D] h-1 bg-[#050505] rounded-lg cursor-pointer"
                 />
               </div>
 
               {/* Weight & Height Panel */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-black/40 p-5 rounded-2xl border border-[#222] space-y-2">
-                  <span className="text-[10px] text-neutral-500 block uppercase font-bold tracking-wider">Peso Atual</span>
+                  <span className="text-xs text-neutral-300 block uppercase font-black tracking-widest">Peso Atual</span>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
                       value={weight}
                       id="onboard-weight-input"
                       onChange={(e) => setWeight(parseFloat(e.target.value) || 0)}
-                      className="w-full bg-[#050505] border border-[#222] rounded-xl px-3 py-2 font-mono text-[#D4FF00] text-lg font-black focus:outline-none focus:border-[#D4FF00]"
+                      className="w-full bg-[#050505] border border-[#222] rounded-xl px-3 py-2 font-mono text-[#EFE71D] text-lg font-black focus:outline-none focus:border-[#EFE71D]"
                     />
-                    <span className="text-xs text-neutral-500">kg</span>
+                    <span className="text-xs text-neutral-200 font-black">kg</span>
                   </div>
                 </div>
 
                 <div className="bg-black/40 p-5 rounded-2xl border border-[#222] space-y-2">
-                  <span className="text-[10px] text-neutral-500 block uppercase font-bold tracking-wider">Altura exata</span>
+                  <span className="text-xs text-neutral-300 block uppercase font-black tracking-widest">Altura exata</span>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
                       value={height}
                       id="onboard-height-input"
                       onChange={(e) => setHeight(parseInt(e.target.value) || 0)}
-                      className="w-full bg-[#050505] border border-[#222] rounded-xl px-3 py-2 font-mono text-[#D4FF00] text-lg font-black focus:outline-none focus:border-[#D4FF00]"
+                      className="w-full bg-[#050505] border border-[#222] rounded-xl px-3 py-2 font-mono text-[#EFE71D] text-lg font-black focus:outline-none focus:border-[#EFE71D]"
                     />
-                    <span className="text-xs text-neutral-500">cm</span>
+                    <span className="text-xs text-neutral-200 font-black">cm</span>
                   </div>
                 </div>
               </div>
@@ -139,7 +139,7 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
           <div className="space-y-6 animate-fadeIn">
             <div className="space-y-1">
               <h3 className="text-2xl font-black text-white flex items-center gap-2 uppercase tracking-tighter italic">
-                <Award className="text-[#D4FF00]" size={20} />
+                <Award className="text-[#EFE71D]" size={20} />
                 Nível de Experiência
               </h3>
               <p className="text-xs text-neutral-400">
@@ -159,14 +159,14 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
                   onClick={() => setExperienceLevel(item.value as any)}
                   className={`flex items-start text-left p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
                     experienceLevel === item.value
-                      ? 'bg-[#D4FF00]/5 border-[#D4FF00]'
+                      ? 'bg-[#EFE71D]/5 border-[#EFE71D]'
                       : 'bg-[#121212] border-[#222] hover:border-neutral-700'
                   }`}
                 >
                   <div className={`mt-0.5 mr-3 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                    experienceLevel === item.value ? 'border-[#D4FF00]' : 'border-neutral-700'
+                    experienceLevel === item.value ? 'border-[#EFE71D]' : 'border-neutral-700'
                   }`}>
-                    {experienceLevel === item.value && <div className="w-2 h-2 bg-[#D4FF00] rounded-full" />}
+                    {experienceLevel === item.value && <div className="w-2 h-2 bg-[#EFE71D] rounded-full" />}
                   </div>
                   <div>
                     <span className="font-bold text-sm text-white block">{item.label}</span>
@@ -182,10 +182,10 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
           <div className="space-y-6 animate-fadeIn">
             <div className="space-y-1">
               <h3 className="text-2xl font-black text-white flex items-center gap-2 uppercase tracking-tighter italic">
-                <Home className="text-[#D4FF00]" size={20} />
+                <Home className="text-[#EFE71D]" size={20} />
                 Ambiente & Frequência
               </h3>
-              <p className="text-xs text-neutral-400">
+              <p className="text-xs text-neutral-200 font-medium leading-relaxed">
                 Indique o local disponível e sua regularidade semanal para gerar uma grade biomecânica eficiente.
               </p>
             </div>
@@ -193,18 +193,18 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
             <div className="space-y-5">
               {/* Training Location Selection */}
               <div className="space-y-2">
-                <span className="text-[10px] text-neutral-500 font-bold tracking-wider uppercase block">Localização física</span>
+                <span className="text-xs text-neutral-300 font-black tracking-widest uppercase block">Localização física</span>
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     id="loc-gym"
                     onClick={() => setTrainingLocation('Academia')}
                     className={`flex flex-col items-center justify-center p-5 rounded-2xl border gap-2 transition-all duration-200 cursor-pointer ${
                       trainingLocation === 'Academia'
-                        ? 'bg-[#D4FF00]/5 border-[#D4FF00]'
+                        ? 'bg-[#EFE71D]/5 border-[#EFE71D]'
                         : 'bg-black/35 border-[#222] hover:border-neutral-705'
                     }`}
                   >
-                    <Dumbbell className={trainingLocation === 'Academia' ? 'text-[#D4FF00]' : 'text-neutral-550'} size={24} />
+                    <Dumbbell className={trainingLocation === 'Academia' ? 'text-[#EFE71D]' : 'text-neutral-550'} size={24} />
                     <span className="text-xs font-bold text-white uppercase tracking-wider">Academia Completa</span>
                   </button>
 
@@ -213,11 +213,11 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
                     onClick={() => setTrainingLocation('Home Workout')}
                     className={`flex flex-col items-center justify-center p-5 rounded-2xl border gap-2 transition-all duration-200 cursor-pointer ${
                       trainingLocation === 'Home Workout'
-                        ? 'bg-[#D4FF00]/5 border-[#D4FF00]'
+                        ? 'bg-[#EFE71D]/5 border-[#EFE71D]'
                         : 'bg-black/35 border-[#222] hover:border-neutral-705'
                     }`}
                   >
-                    <Home className={trainingLocation === 'Home Workout' ? 'text-[#D4FF00]' : 'text-neutral-550'} size={24} />
+                    <Home className={trainingLocation === 'Home Workout' ? 'text-[#EFE71D]' : 'text-neutral-550'} size={24} />
                     <span className="text-xs font-bold text-white uppercase tracking-wider">Home (Peso Livre)</span>
                   </button>
                 </div>
@@ -225,7 +225,7 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
 
               {/* Weekly Frequency */}
               <div className="space-y-2">
-                <span className="text-[10px] text-neutral-500 font-bold tracking-wider uppercase block">Frequência Semanal Recomendada</span>
+                <span className="text-xs text-neutral-300 font-black tracking-widest uppercase block">Frequência Semanal Recomendada</span>
                 <div className="grid grid-cols-4 gap-2">
                   {(['3x', '4x', '5x', '6x'] as const).map((freq) => (
                     <button
@@ -234,7 +234,7 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
                       onClick={() => setFrequency(freq)}
                       className={`py-3.5 rounded-xl border text-sm font-mono font-black transition-all text-center cursor-pointer ${
                         frequency === freq
-                          ? 'bg-[#D4FF00] text-black border-[#D4FF00]'
+                          ? 'bg-[#EFE71D] text-black border-[#EFE71D]'
                           : 'bg-[#121212] text-neutral-400 border-[#222] hover:border-neutral-700'
                       }`}
                     >
@@ -251,7 +251,7 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
           <div className="space-y-6 animate-fadeIn">
             <div className="space-y-1">
               <h3 className="text-2xl font-black text-white flex items-center gap-2 uppercase tracking-tighter italic">
-                <Zap className="text-[#D4FF00]" size={20} />
+                <Zap className="text-[#EFE71D]" size={20} />
                 Objetivo Fit de Treino
               </h3>
               <p className="text-xs text-neutral-400">
@@ -274,11 +274,11 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
                     onClick={() => setMainGoal(item.value as any)}
                     className={`flex flex-col items-start p-4 rounded-xl border text-left gap-2 transition-all duration-200 cursor-pointer ${
                       mainGoal === item.value
-                        ? 'bg-[#D4FF00]/5 border-[#D4FF00]'
+                        ? 'bg-[#EFE71D]/5 border-[#EFE71D]'
                         : 'bg-[#121212] border-[#222] hover:border-neutral-700'
                     }`}
                   >
-                    <IconComp className={mainGoal === item.value ? 'text-[#D4FF00]' : 'text-neutral-500'} size={18} />
+                    <IconComp className={mainGoal === item.value ? 'text-[#EFE71D]' : 'text-neutral-500'} size={18} />
                     <div>
                       <span className="font-bold text-xs text-white block leading-tight">{item.label}</span>
                       <span className="text-[9px] text-neutral-400 mt-1 block leading-none">{item.desc}</span>
@@ -310,13 +310,13 @@ export default function Onboarding({ student, onComplete }: OnboardingProps) {
             className="flex items-center gap-1.5 px-6 py-3.5 bg-[#121212] hover:bg-[#050505] text-white text-xs font-black uppercase tracking-widest border border-[#222] hover:border-neutral-700 rounded-xl transition-all cursor-pointer"
           >
             Avançar
-            <ChevronRight size={14} className="text-[#D4FF00]" />
+            <ChevronRight size={14} className="text-[#EFE71D]" />
           </button>
         ) : (
           <button
             onClick={handleSubmit}
             id="btn-onboarding-submit"
-            className="flex items-center gap-1.5 px-6 py-3.5 bg-[#D4FF00] hover:bg-white text-black text-xs font-black uppercase italic tracking-tighter rounded-xl transition-all cursor-pointer shadow-lg shadow-[#D4FF00]/10"
+            className="flex items-center gap-1.5 px-6 py-3.5 bg-[#EFE71D] hover:bg-white text-black text-xs font-black uppercase italic tracking-tighter rounded-xl transition-all cursor-pointer shadow-lg shadow-[#EFE71D]/10"
           >
             <Check size={14} />
             Gerar Meu Treino Inteligente

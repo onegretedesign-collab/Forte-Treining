@@ -96,28 +96,25 @@ export default function WelcomeAuth({
   return (
     <div className="min-h-screen bg-[#050505] text-neutral-100 flex items-center justify-center py-10 px-4 md:px-8 relative overflow-hidden font-sans" id="forte-welcome-auth-container">
       {/* Dynamic Background Gradients */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#D4FF00]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#EFE71D]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-red-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
         
         {/* Left column: Branding presentation */}
         <div className="lg:col-span-5 space-y-6 text-center lg:text-left">
-          <div className="inline-flex items-center gap-3 bg-neutral-900 border border-[#222] px-4 py-2 rounded-2xl">
-            <div className="w-8 h-8 bg-[#D4FF00] rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-[#D4FF00]/10">
-              <Dumbbell className="text-black transform -rotate-45" size={16} />
-            </div>
-            <span className="text-[10px] text-[#D4FF00] font-mono font-black uppercase tracking-widest leading-none">
-              FORTE TREINING v2.0
+          <div className="inline-flex items-center justify-center bg-neutral-900 border border-[#222] px-6 py-3 rounded-2xl">
+            <span className="text-xs text-[#EFE71D] font-mono font-black uppercase tracking-widest leading-none">
+              MENDES FITNESS v2.0
             </span>
           </div>
 
           <div className="space-y-3">
             <h1 className="text-4xl sm:text-5xl font-black text-white uppercase italic tracking-tighter leading-none">
               Sua Ficha, <br />
-              Seu <span className="text-[#D4FF00]">Progresso.</span>
+              Seu <span className="text-[#EFE71D]">Progresso.</span>
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-400 font-medium leading-relaxed max-w-sm mx-auto lg:mx-0">
+            <p className="text-xs sm:text-sm text-neutral-250 font-bold leading-relaxed max-w-sm mx-auto lg:mx-0">
               Gerencie seus treinos biomecânicos personalizados e monitore suas cargas e evoluções físicas. Acesse sua área restrita agora.
             </p>
           </div>
@@ -125,11 +122,11 @@ export default function WelcomeAuth({
           {/* Bullet specifications */}
           <div className="hidden lg:grid grid-cols-1 gap-3 pt-4 border-t border-[#222]/60">
             <div className="flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-[#D4FF00]" />
+              <span className="w-2 h-2 rounded-full bg-[#EFE71D]" />
               <span className="text-xs text-neutral-300 font-medium">Controle de Cargas e Séries Progressivas</span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-[#D4FF00]" />
+              <span className="w-2 h-2 rounded-full bg-[#EFE71D]" />
               <span className="text-xs text-neutral-300 font-medium">Onboarding Biomédico de Frequência Dinâmica</span>
             </div>
             <div className="flex items-center gap-3">
@@ -144,7 +141,7 @@ export default function WelcomeAuth({
           
           {/* Dynamic Light Accent depending on activeTab */}
           <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] pointer-events-none transition-all duration-500 ${
-            activeTab === 'login' ? 'bg-[#D4FF00]/5' : activeTab === 'register' ? 'bg-[#D4FF00]/5' : 'bg-red-500/5'
+            activeTab === 'login' ? 'bg-[#EFE71D]/5' : activeTab === 'register' ? 'bg-[#EFE71D]/5' : 'bg-red-500/5'
           }`} />
 
           {/* Form Tabs Switch */}
@@ -157,7 +154,7 @@ export default function WelcomeAuth({
               }}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-black transition-all uppercase italic tracking-tighter cursor-pointer ${
                 activeTab === 'login'
-                  ? 'bg-neutral-900 text-[#D4FF00] border border-[#222] shadow'
+                  ? 'bg-neutral-900 text-[#EFE71D] border border-[#222] shadow'
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
@@ -172,7 +169,7 @@ export default function WelcomeAuth({
               }}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-black transition-all uppercase italic tracking-tighter cursor-pointer ${
                 activeTab === 'register'
-                  ? 'bg-neutral-900 text-[#D4FF00] border border-[#222] shadow'
+                  ? 'bg-neutral-900 text-[#EFE71D] border border-[#222] shadow'
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
@@ -187,7 +184,7 @@ export default function WelcomeAuth({
               }}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-black transition-all uppercase italic tracking-tighter cursor-pointer ${
                 activeTab === 'admin'
-                  ? 'bg-neutral-900 text-[#D4FF00] border border-[#222] shadow'
+                  ? 'bg-neutral-900 text-[#EFE71D] border border-[#222] shadow'
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
@@ -202,8 +199,8 @@ export default function WelcomeAuth({
             {activeTab === 'login' && (
               <form onSubmit={handleLoginSubmit} className="space-y-4" id="form-welcome-login">
                 <div className="space-y-1">
-                  <span className="text-[9px] text-[#D4FF00] font-mono font-black uppercase tracking-widest block select-none">ACESSO AO PORTAL DO ATLETA</span>
-                  <p className="text-[11px] text-neutral-400">Insira seu e-mail cadastrado para visualizar e iniciar seus treinos.</p>
+                  <span className="text-xs text-[#EFE71D] font-mono font-black uppercase tracking-widest block select-none">ACESSO AO PORTAL DO ATLETA</span>
+                  <p className="text-xs text-neutral-200 font-bold">Insira seu e-mail cadastrado para visualizar e iniciar seus treinos.</p>
                 </div>
 
                 {loginError && (
@@ -214,7 +211,7 @@ export default function WelcomeAuth({
                 )}
 
                 <div className="space-y-1.5">
-                  <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest block">E-mail Cadastrado</label>
+                  <label className="text-xs text-neutral-200 font-black uppercase tracking-widest block">E-mail Cadastrado</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
                       <Mail size={14} />
@@ -225,14 +222,14 @@ export default function WelcomeAuth({
                       placeholder="seu.nome@exemplo.com"
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
-                      className="w-full bg-[#050505] border border-[#222] focus:border-[#D4FF00] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
+                      className="w-full bg-[#050505] border border-[#222] focus:border-[#EFE71D] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-[#D4FF00] hover:bg-white text-black py-4 rounded-xl text-xs font-black uppercase italic tracking-tighter transition-all cursor-pointer shadow-lg shadow-[#D4FF00]/10 flex items-center justify-center gap-1.5 mt-2"
+                  className="w-full bg-[#EFE71D] hover:bg-white text-black py-4 rounded-xl text-xs font-black uppercase italic tracking-tighter transition-all cursor-pointer shadow-lg shadow-[#EFE71D]/10 flex items-center justify-center gap-1.5 mt-2"
                 >
                   Carregar Ficha de Treino
                   <ArrowRight size={14} />
@@ -246,8 +243,8 @@ export default function WelcomeAuth({
             {activeTab === 'register' && (
               <form onSubmit={handleRegisterSubmit} className="space-y-4" id="form-welcome-register">
                 <div className="space-y-1">
-                  <span className="text-[9px] text-[#D4FF00] font-mono font-black uppercase tracking-widest block select-none">MATRÍCULA DE NOVO MEMBRO</span>
-                  <p className="text-[11px] text-neutral-400">Insira seus dados cadastrais para ingressar no sistema e iniciar o Onboarding.</p>
+                  <span className="text-xs text-[#EFE71D] font-mono font-black uppercase tracking-widest block select-none">MATRÍCULA DE NOVO MEMBRO</span>
+                  <p className="text-xs text-neutral-200 font-bold">Insira seus dados cadastrais para ingressar no sistema e iniciar o Onboarding.</p>
                 </div>
 
                 {regError && (
@@ -260,7 +257,7 @@ export default function WelcomeAuth({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Nome */}
                   <div className="space-y-1.5">
-                    <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest block">Nome Completo</label>
+                    <label className="text-xs text-neutral-200 font-black uppercase tracking-widest block">Nome Completo</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
                         <User size={14} />
@@ -271,14 +268,14 @@ export default function WelcomeAuth({
                         placeholder="Ex: Pedro Silva"
                         value={regName}
                         onChange={(e) => setRegName(e.target.value)}
-                        className="w-full bg-[#050505] border border-[#222] focus:border-[#D4FF00] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
+                        className="w-full bg-[#050505] border border-[#222] focus:border-[#EFE71D] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Idade */}
                   <div className="space-y-1.5">
-                    <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest block">Idade (Idade)</label>
+                    <label className="text-xs text-neutral-200 font-black uppercase tracking-widest block">Idade (Idade)</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
                         <Calendar size={14} />
@@ -291,7 +288,7 @@ export default function WelcomeAuth({
                         placeholder="Ex: 27"
                         value={regAge}
                         onChange={(e) => setRegAge(e.target.value)}
-                        className="w-full bg-[#050505] border border-[#222] focus:border-[#D4FF00] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
+                        className="w-full bg-[#050505] border border-[#222] focus:border-[#EFE71D] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
                       />
                     </div>
                   </div>
@@ -300,7 +297,7 @@ export default function WelcomeAuth({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Email */}
                   <div className="space-y-1.5">
-                    <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest block">E-mail pessoal</label>
+                    <label className="text-xs text-neutral-200 font-black uppercase tracking-widest block">E-mail pessoal</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
                         <Mail size={14} />
@@ -311,14 +308,14 @@ export default function WelcomeAuth({
                         placeholder="pedro@email.com"
                         value={regEmail}
                         onChange={(e) => setRegEmail(e.target.value)}
-                        className="w-full bg-[#050505] border border-[#222] focus:border-[#D4FF00] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
+                        className="w-full bg-[#050505] border border-[#222] focus:border-[#EFE71D] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Contato */}
                   <div className="space-y-1.5">
-                    <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest block">Contato telefônico</label>
+                    <label className="text-xs text-[#EFE71D] font-black uppercase tracking-widest block">Contato telefônico</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
                         <Phone size={14} />
@@ -329,7 +326,7 @@ export default function WelcomeAuth({
                         placeholder="Ex: (11) 99999-9999"
                         value={regContact}
                         onChange={(e) => setRegContact(e.target.value)}
-                        className="w-full bg-[#050505] border border-[#222] focus:border-[#D4FF00] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
+                        className="w-full bg-[#050505] border border-[#222] focus:border-[#EFE71D] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
                       />
                     </div>
                   </div>
@@ -337,13 +334,13 @@ export default function WelcomeAuth({
 
                 <button
                   type="submit"
-                  className="w-full bg-[#D4FF00] hover:bg-white text-black py-4 rounded-xl text-xs font-black uppercase italic tracking-tighter transition-all cursor-pointer shadow-lg shadow-[#D4FF00]/10 flex items-center justify-center gap-1.5 mt-2"
+                  className="w-full bg-[#EFE71D] hover:bg-white text-black py-4 rounded-xl text-xs font-black uppercase italic tracking-tighter transition-all cursor-pointer shadow-lg shadow-[#EFE71D]/10 flex items-center justify-center gap-1.5 mt-2"
                 >
                   Concluir Matrícula & Acessar
                   <ArrowRight size={14} />
                 </button>
 
-                <p className="text-[10px] text-neutral-500 font-medium text-center">
+                <p className="text-xs text-neutral-250 font-bold text-center">
                   ⚠️ Ao se matricular, seu registro é sincronizado e fica visível na Recepção e no Painel Administrativo.
                 </p>
               </form>
@@ -353,8 +350,8 @@ export default function WelcomeAuth({
             {activeTab === 'admin' && (
               <form onSubmit={handleAdminSubmit} className="space-y-4" id="form-welcome-admin">
                 <div className="space-y-1">
-                  <span className="text-[9px] text-red-500 font-mono font-black uppercase tracking-widest block select-none">ACESSO INTEGRADO DO ADMINISTRADOR</span>
-                  <p className="text-[11px] text-neutral-400">Entre com as credenciais de segurança para ver o Painel, matricular e trocar pendências.</p>
+                  <span className="text-xs text-red-400 font-mono font-black uppercase tracking-widest block select-none">ACESSO INTEGRADO DO ADMINISTRADOR</span>
+                  <p className="text-xs text-neutral-200 font-bold">Entre com as credenciais de segurança para ver o Painel, matricular e trocar pendências.</p>
                 </div>
 
                 {adminError && (
@@ -365,7 +362,7 @@ export default function WelcomeAuth({
                 )}
 
                 <div className="space-y-1.5">
-                  <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest block">Identificador de Admin</label>
+                  <label className="text-xs text-neutral-200 font-black uppercase tracking-widest block">Identificador de Admin</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
                       <User size={14} />
@@ -376,13 +373,13 @@ export default function WelcomeAuth({
                       placeholder="Ex: Treiningfort"
                       value={adminUser}
                       onChange={(e) => setAdminUser(e.target.value)}
-                      className="w-full bg-[#050505] border border-[#222] focus:border-[#D4FF00] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
+                      className="w-full bg-[#050505] border border-[#222] focus:border-[#EFE71D] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest block">Senha Administrativa</label>
+                  <label className="text-xs text-neutral-200 font-black uppercase tracking-widest block">Senha Administrativa</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
                       <Lock size={14} />
@@ -393,14 +390,14 @@ export default function WelcomeAuth({
                       placeholder="••••••"
                       value={adminPass}
                       onChange={(e) => setAdminPass(e.target.value)}
-                      className="w-full bg-[#050505] border border-[#222] focus:border-[#D4FF00] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
+                      className="w-full bg-[#050505] border border-[#222] focus:border-[#EFE71D] rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-neutral-700 focus:outline-none transition-all"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-[#D4FF00] hover:bg-white text-black py-4 rounded-xl text-xs font-black uppercase italic tracking-tighter transition-all cursor-pointer shadow-lg shadow-[#D4FF00]/10 flex items-center justify-center gap-1.5 mt-2"
+                  className="w-full bg-[#EFE71D] hover:bg-white text-black py-4 rounded-xl text-xs font-black uppercase italic tracking-tighter transition-all cursor-pointer shadow-lg shadow-[#EFE71D]/10 flex items-center justify-center gap-1.5 mt-2"
                 >
                   Entrar no Painel Admin
                   <ArrowRight size={14} />

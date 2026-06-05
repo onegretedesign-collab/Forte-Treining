@@ -103,7 +103,7 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
   {
     id: 'student-1',
     name: 'Rodrigo Silva',
-    email: 'rodrigo.silva@academiaforte.com',
+    email: 'rodrigo.silva@mendesfitness.com',
     role: 'aluno',
     statusFinanceiro: 'Pago',
     onboarded: true,

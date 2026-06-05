@@ -29,7 +29,7 @@ export default function ArchitectureView() {
             </div>
             <h2 className="text-3xl font-black tracking-tighter uppercase italic text-white leading-none">Especificações & Arquitetura</h2>
             <p className="text-neutral-400 text-xs mt-2 max-w-xl">
-              Análise detalhada do ecossistema NoSQL idealizado pelo Arquiteto de Software Sênior para a marca Forte Treining.
+              Análise detalhada do ecossistema NoSQL idealizado pelo Arquiteto de Software Sênior para a marca Mendes Fitness.
             </p>
           </div>
           
@@ -431,7 +431,7 @@ export const TrainingGate: React.FC = ({ children }) => {
           "Ops! Identificamos uma pendência na sua matrícula. " +
           "Compareça à recepção para liberar seu acesso."
         }
-        receptionContact="recepcao@academiaforte.com"
+        receptionContact="recepcao@mendesfitness.com"
       />
     );
   }
