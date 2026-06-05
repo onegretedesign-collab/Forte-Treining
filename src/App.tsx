@@ -581,7 +581,7 @@ export default function App() {
             <img 
               src="https://i.postimg.cc/VNqg3g35/LOGO-MENDESSS.png" 
               alt="Mendes Fitness Logo" 
-              className="h-[52px] sm:h-[65px] w-auto object-contain" 
+              className="h-[62px] sm:h-[78px] w-auto object-contain" 
               referrerPolicy="no-referrer"
             />
           </div>
