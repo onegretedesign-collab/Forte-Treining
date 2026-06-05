@@ -148,14 +148,9 @@ export default function App() {
 
   const handleInstallApp = () => {
     setUserConfirmedInstall(false);
-    setIsDownloading(false);
-    setDownloadProgress(0);
-    setShowInstallConfirm(true);
-  };
-
-  const handleConfirmInstallAction = async () => {
     setIsDownloading(true);
     setDownloadProgress(0);
+    setShowInstallConfirm(true);
 
     const interval = setInterval(() => {
       setDownloadProgress((prev) => {
@@ -1270,7 +1265,7 @@ export default function App() {
             exit={{ opacity: 0, y: 30, scale: 0.95 }}
             onClick={() => {
               setInstallToast(prev => ({ ...prev, show: false }));
-              setShowInstallConfirm(true);
+              handleInstallApp();
             }}
             className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:max-w-md bg-[#121212]/98 backdrop-blur-md border-2 border-[#EFE71D]/60 rounded-2xl p-4 z-50 flex items-start gap-3.5 shadow-2xl shadow-black/95 cursor-pointer hover:border-[#EFE71D] hover:bg-neutral-900/90 transition-all duration-300"
             title="Clique para Baixar o Aplicativo"
@@ -1362,34 +1357,6 @@ export default function App() {
                       animate={{ width: `${downloadProgress}%` }}
                       transition={{ duration: 0.1 }}
                     />
-                  </div>
-                </div>
-              ) : !userConfirmedInstall ? (
-                <div className="space-y-5">
-                  <p className="text-sm text-neutral-300 leading-relaxed font-semibold">
-                    Deseja realizar o download e instalar o aplicativo <strong className="text-white">Mendes Fitness</strong> no seu aparelho?
-                  </p>
-                  
-                  <div className="bg-black/40 p-4 rounded-2xl border border-neutral-900/60 space-y-2">
-                    <p className="text-xs text-neutral-400 leading-relaxed">
-                      💡 Sendo instalado, você terá acesso imediato às suas fichas de treino na tela inicial de forma rápida, em tela cheia e sem precisar usar o navegador!
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3 pt-2">
-                    <button
-                      onClick={() => setShowInstallConfirm(false)}
-                      className="flex-1 py-3 text-xs uppercase italic font-black text-neutral-400 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-xl transition cursor-pointer"
-                    >
-                      Não, Cancelar
-                    </button>
-                    <button
-                      onClick={handleConfirmInstallAction}
-                      className="flex-1 py-3 text-xs uppercase italic font-black text-black bg-[#EFE71D] hover:bg-white rounded-xl transition cursor-pointer shadow-lg shadow-[#EFE71D]/15 flex items-center justify-center gap-1.5"
-                    >
-                      <Download size={13} className="stroke-[3]" />
-                      Sim, Baixar / Instalar
-                    </button>
                   </div>
                 </div>
               ) : (

@@ -1,8 +1,8 @@
-const CACHE_NAME = 'forte-treining-v2';
+const CACHE_NAME = 'mendes-fitness-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/logo.jpg',
+  'https://i.postimg.cc/wMf1VfcF/favicon.png',
   '/manifest.json'
 ];
 
