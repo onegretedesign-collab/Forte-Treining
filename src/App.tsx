@@ -146,139 +146,28 @@ export default function App() {
     };
   }, []);
 
-  const handleInstallApp = () => {
+  const handleInstallApp = async () => {
     setUserConfirmedInstall(false);
-    setIsDownloading(true);
+    setIsDownloading(false);
     setDownloadProgress(0);
-    setShowInstallConfirm(true);
 
-    const interval = setInterval(() => {
-      setDownloadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsDownloading(false);
-          setUserConfirmedInstall(true);
-
-          // Force download physical app launcher shortcut
-          try {
-            const tagline = "A ACADEMIA COM RESULTADOS";
-            const shortcutContent = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <title>Mendes Fitness</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      background-color: #050505;
-      color: #ffffff;
-      font-family: system-ui, -apple-system, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      text-align: center;
-      padding: 24px;
-    }
-    .card {
-      background: #121212;
-      border: 2px solid #EFE71D;
-      padding: 40px 24px;
-      border-radius: 24px;
-      max-width: 360px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-    }
-    .logo {
-      width: 160px;
-      height: auto;
-      margin-bottom: 20px;
-    }
-    h2 {
-      font-size: 24px;
-      font-weight: 900;
-      margin: 0 0 8px 0;
-      text-transform: uppercase;
-      font-style: italic;
-    }
-    .tagline {
-      color: #EFE71D;
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      margin-bottom: 16px;
-      text-transform: uppercase;
-    }
-    .btn {
-      display: inline-block;
-      background-color: #EFE71D;
-      color: #000000;
-      padding: 14px 28px;
-      border-radius: 12px;
-      text-decoration: none;
-      font-weight: 900;
-      text-transform: uppercase;
-      font-style: italic;
-      font-size: 13px;
-      letter-spacing: -0.5px;
-      transition: all 0.2s ease-in-out;
-      box-shadow: 0 8px 16px rgba(239, 231, 29, 0.2);
-    }
-    .btn:hover {
-      background-color: #ffffff;
-      transform: translateY(-2px);
-    }
-    p {
-      color: #a3a3a3;
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <img src="https://i.postimg.cc/VNqg3g35/LOGO-MENDESSS.png" class="logo" alt="Mendes Fitness">
-    <h2>Mendes Fitness</h2>
-    <div class="tagline">${tagline}</div>
-    <p>Abra o Mendes Fitness no seu navegador para treinar com a melhor biomecânica do Brasil.</p>
-    <a href="${window.location.origin}" class="btn">Abrir Aplicativo</a>
-  </div>
-</body>
-</html>`;
-
-            const blob = new Blob([shortcutContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Mendes_Fitness.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-          } catch (shortcutErr) {
-            console.error('Erro ao baixar atalho:', shortcutErr);
-          }
-
-          // Native installation prompt trigger
-          if (deferredPrompt) {
-            try {
-              deferredPrompt.prompt();
-              deferredPrompt.userChoice.then(({ outcome }: { outcome: string }) => {
-                if (outcome === 'accepted') {
-                  setDeferredPrompt(null);
-                }
-              });
-            } catch (err) {
-              console.error('Erro na instalação nativa:', err);
-            }
-          }
-          return 100;
+    if (deferredPrompt) {
+      try {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          setDeferredPrompt(null);
+          setInstallToast(prev => ({ ...prev, show: false }));
+          setShowInstallConfirm(false);
         }
-        return prev + 10;
-      });
-    }, 120);
+      } catch (err) {
+        console.error('Erro na instalação nativa:', err);
+      }
+    } else {
+      // If deferredPrompt is not available (e.g., Safari iOS or already installed or beforeinstallprompt not yet loaded),
+      // we show the assistive modal instructions.
+      setShowInstallConfirm(true);
+    }
   };
 
   // --- Toast/Alert State for Daily Workout Progression ---
@@ -1331,54 +1220,25 @@ export default function App() {
               </div>
 
               {/* Core interactive content */}
-              {isDownloading ? (
-                <div className="space-y-6 py-4 text-center">
-                  <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
-                    {/* Pulsing glow background */}
-                    <div className="absolute inset-0 rounded-full bg-[#EFE71D]/10 animate-ping" />
-                    <div className="w-16 h-16 rounded-full border-4 border-neutral-900 border-t-[#EFE71D] animate-spin flex items-center justify-center">
-                      <Download size={24} className="text-[#EFE71D]" />
+              <div className="space-y-5">
+                {/* Native Prompt handled vs Assistive guides shown immediately */}
+                {deferredPrompt ? (
+                  <div className="space-y-4 text-center py-4">
+                    <div className="w-12 h-12 rounded-full bg-[#EFE71D]/10 mx-auto flex items-center justify-center">
+                      <Check size={22} className="text-[#EFE71D]" />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-black uppercase tracking-wider text-[#EFE71D] italic">
-                      Baixando Aplicativo... {downloadProgress}%
-                    </p>
-                    <p className="text-xs text-neutral-400">
-                      Instalando recursos e configurando atalhos de treino.
+                    <p className="text-sm text-neutral-200 font-bold">
+                      Confirmado! Siga o prompt que surgiu no seu navegador para baixar o app na sua tela inicial!
                     </p>
                   </div>
-                  {/* Progress Bar Container */}
-                  <div className="w-full bg-neutral-950 rounded-full h-2.5 overflow-hidden border border-neutral-900">
-                    <motion.div 
-                      className="bg-[#EFE71D] h-full"
-                      style={{ width: `${downloadProgress}%` }}
-                      initial={{ width: '0%' }}
-                      animate={{ width: `${downloadProgress}%` }}
-                      transition={{ duration: 0.1 }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-5">
-                  {/* Native Prompt handled vs Assistive guides shown immediately */}
-                  {deferredPrompt ? (
-                    <div className="space-y-4 text-center py-4">
-                      <div className="w-12 h-12 rounded-full bg-[#EFE71D]/10 mx-auto flex items-center justify-center">
-                        <Check size={22} className="text-[#EFE71D]" />
-                      </div>
-                      <p className="text-sm text-neutral-200 font-bold">
-                        Confirmado! Siga o prompt que surgiu no seu navegador para baixar o app na sua tela inicial!
-                      </p>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#EFE71D] uppercase tracking-wider">
+                      <Smartphone size={14} /> Como Baixar e Instalar:
                     </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 text-xs font-bold text-[#EFE71D] uppercase tracking-wider">
-                        <Smartphone size={14} /> Como Baixar e Instalar:
-                      </div>
 
-                      {/* Device dynamic content detection on prompt success */}
-                      {(() => {
+                    {/* Device dynamic content detection on prompt success */}
+                    {(() => {
                         const isIframe = window.self !== window.top;
                         const ua = window.navigator.userAgent.toLowerCase();
                         const isiOS = /iphone|ipad|ipod/.test(ua);
@@ -1446,7 +1306,6 @@ export default function App() {
                     Entendido, Começar Treino
                   </button>
                 </div>
-              )}
             </motion.div>
           </motion.div>
         )}

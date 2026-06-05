@@ -2,7 +2,7 @@ const CACHE_NAME = 'mendes-fitness-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  'https://i.postimg.cc/wMf1VfcF/favicon.png',
+  '/favicon.png',
   '/manifest.json'
 ];
 
