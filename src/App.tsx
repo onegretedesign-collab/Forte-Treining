@@ -581,7 +581,7 @@ export default function App() {
             <img 
               src="https://i.postimg.cc/VNqg3g35/LOGO-MENDESSS.png" 
               alt="Mendes Fitness Logo" 
-              className="h-[156px] sm:h-[186px] max-h-[22vh] w-auto object-contain" 
+              className="h-[52px] sm:h-[65px] w-auto object-contain" 
               referrerPolicy="no-referrer"
             />
           </div>
@@ -613,6 +613,20 @@ export default function App() {
                 title="Sair da conta de aluno"
               >
                 Sair
+              </button>
+            )}
+
+            {isAdminAuthenticated && (
+              <button
+                onClick={() => {
+                  setIsAdminAuthenticated(false);
+                  setActiveTab('student');
+                  alert('Sessão administrativa encerrada com sucesso.');
+                }}
+                className="px-5 py-2.5 rounded-xl text-xs font-black uppercase italic tracking-tighter text-red-500 hover:text-white bg-red-950/25 hover:bg-red-900/40 border border-red-500/30 transition shrink-0 cursor-pointer"
+                title="Sair do painel administrador"
+              >
+                Sair Admin
               </button>
             )}
           </nav>
